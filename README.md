@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- GNU Arm Embedded Toolchain (`binutils-arm-none-eabi` or [Web](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
+- GNU Arm Embedded Toolchain (`binutils-arm-none-eabi` or download from [official site](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
 - gcc, make (For x86 or x86_64)
 - mGBA (Optional)
 
@@ -20,11 +20,11 @@ The classical song "Gymnopedie No.1 (Erik Satie)" will be played with cute Gameb
 
 ### To add songs:
 
-First, prepare for your song in MML format
-(the format must be based on
+First, prepare your song in MML format
+(the format must follow
 [Mabinogi](https://mabinogi.nexon.co.jp/) MML
 or
-[mjapa.jp](https://music-school.mjapa.jp/) MML sequencer)
+[mjapa.jp](https://music-school.mjapa.jp/) MML (Both are almost same format))
 
 Reference:
 
