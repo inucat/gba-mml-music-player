@@ -1,5 +1,6 @@
 @ GBA ROM Header
 @ Author is @inucat4 (2021-09-03).
+@ This file is in the public domain.
 .text
     @ 4B    ROM Entry Point
     b   main

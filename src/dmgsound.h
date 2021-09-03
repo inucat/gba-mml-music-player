@@ -2,7 +2,6 @@
  * @file dmgsound.h
  * @brief GBA Sound register map & bit assignments
  * @author inucat
- * @remarks The Unlicensed
  * @note DMG refers to GameBoy whose codename is Dot Matrix Game.
  */
 #ifndef _DMGSOUND_H_
