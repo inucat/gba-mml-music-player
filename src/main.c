@@ -2,6 +2,8 @@
 #include "songdata.h"
 #include "sounddrv.h"
 
+#define SONGINDEX_TO_PLAY 0   // <--- Change here for other songs
+
 void irq_handler(void)
 {
     reg16(IME) = IME_OFF;   // Stop IRQ to prevent multiple IRQ
@@ -17,7 +19,7 @@ int main(void)
 {
     reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IR handler
     dmginit();
-    dmgload(0);
+    dmgload(SONGINDEX_TO_PLAY);
     dmgplay();
     while(1);
 
