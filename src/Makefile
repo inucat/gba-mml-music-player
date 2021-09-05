@@ -7,7 +7,9 @@ CFLAGS = -Wall -O -fno-builtin -fomit-frame-pointer -finhibit-size-directive \
 OUTNAME = main
 FILES = \
 	crt.o ${OUTNAME}.o \
-	sounddrv.o songdata.o
+	sounddrv.o songdata.o \
+	meguri_gothic_2nd_nega.o \
+	meguri_gothic_2nd.o
 
 
 ${OUTNAME}.bin: ${FILES}
