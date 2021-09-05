@@ -20,16 +20,15 @@ The classical song "Gymnopedie No.1 (Erik Satie)" will be played with cute Gameb
 
 ### To add songs:
 
-First, prepare your song in MML format
-(the format must follow
-[Mabinogi](https://mabinogi.nexon.co.jp/) MML
+First, prepare your song in MML format.
+The format must follow
+[Mabinogi](https://mabinogi.nexon.co.jp/) style
 or
-[mjapa.jp](https://music-school.mjapa.jp/) MML (Both are almost same format))
+[mjapa.jp](https://music-school.mjapa.jp/) style (Both are quite simillar).
 
-Reference:
-
-- [Mabinogi MML](https://wikiwiki.jp/mabinogi/%E9%9F%B3%E6%A5%BD/MML)
-- [mjapa.jp MML](https://music-school.mjapa.jp/mml_to_midi_converter.html#mml_image)
+- Reference:
+    - [Mabinogi MML](https://wikiwiki.jp/mabinogi/%E9%9F%B3%E6%A5%BD/MML)
+    - [mjapa.jp MML](https://music-school.mjapa.jp/mml_to_midi_converter.html#mml_image)
 
 If you get ready:
 
@@ -42,16 +41,18 @@ make
 It converts MML to C array forms for `src/songdata.c`.
 
 Copy the output, paste lines beginning with `const` to above `songs` array in the file,
-and paste `{~~~_1, ~~~_2, ~~~_3, ~~~_4},` into `songs`.
+and paste the line of `{~~~_1, ~~~_2, ~~~_3, ~~~_4},` into `songs`.
+`~~~` is your song name.
 
-Finally, change the value of `SONGINDEX_TO_PLAY` (in `main.c`) to your song index in `songs`,
+Finally, change the value of `SONGINDEX_TO_PLAY` in `main.c` to your song index of `songs`,
 then do as you play a demo (see above).
 
 `mml2dmg` has several options.
 
-- `-pX` shifts pitch by X
-- `-oX` shifts octave by X
+- `-pX` shifts pitch by X (integer)
+- `-oX` shifts octave by X (integer)
 <!-- - `-vX` tells converter the velocity scale mode (X=w for SMW MML (256), =m for Mabinogi (16)) (Not implemented yet) -->
 
-If you see an error "Note number under 36!" or "Note number over 127!" (meaning "octave out of range"),
-try these options.
+If you see an error "Note number under 36!" or "Note number over 127!",
+it means that one or more notes are "out of octave range (= not in C2 to A9)".
+If so, try these options.
