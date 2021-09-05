@@ -10,7 +10,7 @@ FILES = \
 	sounddrv.o songdata.o \
 	meguri_gothic_2nd_nega.o \
 	meguri_gothic_2nd.o \
-	bgmgr.o
+	bgobjmgr.o
 
 
 ${OUTNAME}.bin: ${FILES} *.h

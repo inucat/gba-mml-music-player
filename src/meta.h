@@ -9,6 +9,6 @@
 #include "meguri_gothic_2nd.h"
 #include "meguri_gothic_2nd_ktkn.h"
 #include "meguri_gothic_2nd_nega.h"
-#include "bgmgr.h"
+#include "bgobjmgr.h"
 
 #endif

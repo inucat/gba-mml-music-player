@@ -56,3 +56,10 @@ then do as you play a demo (see above).
 If you see an error "Note number under 36!" or "Note number over 127!",
 it means that one or more notes are "out of octave range (= not in C2 to A9)".
 If so, try these options.
+
+## Credit
+
+### Bitmap Font
+
+Free, redistributable and modifiable
+"Misaki Font" by Num Kadoma :house: [Web site](https://littlelimit.net/misaki.htm)
