@@ -9,10 +9,11 @@ FILES = \
 	crt.o ${OUTNAME}.o \
 	sounddrv.o songdata.o \
 	meguri_gothic_2nd_nega.o \
-	meguri_gothic_2nd.o
+	meguri_gothic_2nd.o \
+	bgmgr.o
 
 
-${OUTNAME}.bin: ${FILES}
+${OUTNAME}.bin: ${FILES} *.h
 	arm-none-eabi-ld -o ${OUTNAME}.out -T gcc.ls \
 	${FILES} ${LIBGCC}
 	arm-none-eabi-objcopy -O binary ${OUTNAME}.out ${OUTNAME}.bin

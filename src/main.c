@@ -16,25 +16,14 @@ void irq_handler(void)
 int main(void)
 {
     reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IR handler
-    reg16(LCDCNT)= LCDCNT_BG0ON | LCDCNT_BGMODE(0);
-    reg16(BG0CNT)= BGCNT_COL256 | BGCNT_MAP3232 | BGCNT_TILENo(8) | BGCNT_MAPNo(16);
-    hword *palBg = (hword *) PALETTE_BG;
-    hword *vramMap = (hword *) VRAM_MAP(16);
-    hword *vramTile = (hword *) VRAM_TILE(0);
-    for (short i=0; i<PALETTE_LEN; i++)
-        palBg[i] = meguri_gothic_2nd_negaPal[i];
-
-    for (short i=0; i < (meguri_gothic_2nd_negaTilesLen>>1); i++)
-        vramTile[i] = meguri_gothic_2nd_negaTiles[i<<1] | (meguri_gothic_2nd_negaTiles[(i<<1)+1] << 8);
-    vramTile = (hword *) VRAM_TILE(8);
-    for (short i=0; i < (meguri_gothic_2ndTilesLen>>1); i++)
-        vramTile[i] = meguri_gothic_2ndTiles[i<<1] | (meguri_gothic_2ndTiles[(i<<1)+1] << 8);
-
-    for (short i=0; i < (meguri_gothic_2ndTilesLen>>6); i++)
-    {
-        vramMap[7 + (i&15) + ((i>>4)<<5) ] = 0xBB;
-        "\xa1";
-    }
+    BgInit();
+    PutStr(0, 3, 1, STAB_MUSICPLAYER);
+    // PutStr(0, 2, 9-3, "\xfd \xba\xda\xca \xb9\xde\xb0\xd1\xce\xde\xb0\xb2\xb1\xc4\xde\xca\xde\xdd\xbd");
+    // PutStr(0, 2, 10-3, "  \xc6\xce\xdd\xba\xde\xc9\xbb\xdd\xcc\xdf\xd9\xc3\xde\xbd");
+    // PutStr(0, 2, 12, "\1\2 Game Boy Advance \1\2");
+    // PutStr(0, 2, 13, "\1\2 \xfa\xfb\x17\3\4\5\6\7 \1\2");
+    // PutStr(0, 2, 17, "@num_kadoma\xbb\xdd\x20\xc9");
+    // PutStr(0, 2, 18, "\xa2\xd0\xbb\xb7\xcc\xab\xdd\xc4\xa3\xc3\xde\xbd!");
 
     dmginit();
     dmgload(SONGINDEX_TO_PLAY);
