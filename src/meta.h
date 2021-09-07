@@ -6,9 +6,9 @@
 #include "dmgsound.h"
 #include "sounddrv.h"
 #include "songdata.h"
+#include "bgobjmgr.h"
 #include "meguri_gothic_2nd.h"
 #include "meguri_gothic_2nd_ktkn.h"
 #include "meguri_gothic_2nd_nega.h"
-#include "bgobjmgr.h"
 
 #endif

@@ -7,7 +7,10 @@
 
 #define FOURBEAT    (INT_FREQ << 1)
 
+/// Load song data & Initialize playback states
+/// @param songidx Song index
 void dmgload(int);
+
 void dmgplay(void);
 void dmgstop(void);
 void dmginit(void);

@@ -23,8 +23,6 @@ static hword hRepHead[CHMAX]    = {0};
 static hword hRepCount[CHMAX]   = {0};
 static hword fLenDot[CHMAX]     = {0};
 
-/// Load song data & Initialize playback states
-/// @param songidx Song index
 void dmgload(int songidx) {
     dmgstop();
     wTick = 0;
@@ -131,14 +129,14 @@ void dmgstep(void)
                 reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | FreqGs[ SongData[ch][hCmdIndex[ch]] ];
             }
 
-            hword steptime = FOURBEAT / hNoteLen[ch];
+            hword gatetime = FOURBEAT / hNoteLen[ch];
 
             if (tempDot == 1 || (lenBackup == 0 && fLenDot[ch] == 1))
-                steptime += (steptime >> 1);
+                gatetime += (gatetime >> 1);
             else if (tempDot == 3 || (lenBackup == 0 && fLenDot[ch] == 3))
-                steptime += (steptime >> 1) + (steptime >> 2);
+                gatetime += (gatetime >> 1) + (gatetime >> 2);
 
-            wNextTick[ch] += steptime;
+            wNextTick[ch] += gatetime;
 
             if (lenBackup)
                 hNoteLen[ch] = lenBackup;

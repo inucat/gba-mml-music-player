@@ -18,12 +18,6 @@ void BgInit(void)
         vramTile[i] = meguri_gothic_2ndTiles[i<<1] | (meguri_gothic_2ndTiles[(i<<1)+1] << 8);
 }
 
-/// Put string to vram map
-/// @param bgnum Reserved. Must be 0.
-/// @param tx Tile-based x coordinate
-/// @param ty Tile-based y coordinate
-/// @param str String to be put
-/// @remarks ALL chars including control characters are put, except only '\0'.
 void PutStr(short bgnum, short tx, short ty, const char *str)
 {
     for (short i=0; str[i]; i++)
