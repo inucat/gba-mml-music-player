@@ -13,7 +13,7 @@ void irq_handler(void)
 
 int main(void)
 {
-    reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IR handler
+    reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IRQ handler
     BgInit();
     BgMakeFrame();
 
@@ -26,18 +26,17 @@ int main(void)
     reg16(TM3COUNT)=0;
     reg16(TM3CTRL)= TM_PRESC1024 | TM_START;
 
-    static unsigned short vcpos, hcpos, songid;    // Vertical or Horizontal Cursor position, and current songid
+    static unsigned short songid;    // Vertical or Horizontal Cursor position, and current songid
     while(1) {
         KeyStateUpdate();
 
         if (KeyTyped(KEY_SEL)) dmgstop();
         if (KeyTyped(KEY_STA)) {dmgload(songid); dmgplay();}
-        if (KeyTyped(KEY_DL)) {songid = (songid ? songid - 1 : 0);}
+        if (KeyTyped(KEY_DL)) {songid = (songid ? songid - 1 : songid_max);}
         if (KeyTyped(KEY_DR)) {songid = (songid == songid_max ? 0 : songid + 1);}
 
         while(reg16(LCDSTAT) ^ LCDSTAT_VBMASK);
         /// Within VBLANK. Update screen
-        if (reg16(TM2CTRL) & TM_START) reg16(BG2OFSH)=reg16(TM3COUNT)>>10;
         PutStr(BGN_MENULIST, BGL_MENU_VALUE_TX-1, 4, (reg16(TM3COUNT) & 0x1000) ? "\xe0     \xe1" : "       ");
         PrintShort(BGN_MENULIST, BGL_MENU_VALUE_TX, 4, songid);
         while(reg16(LCDSTAT) & LCDSTAT_VBMASK);

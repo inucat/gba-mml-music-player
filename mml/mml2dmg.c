@@ -309,6 +309,7 @@ void ReadMML(FILE* pFile) {
                         val &= ~0x08;
                     else
                         fsetpos(pFile, rescanPos);
+                    PutCommandWithValue(SWPC, val);
                 } else {
                     sprintf(errmsg, "'S' command parameters are out of range (0-7,0-7): S%d%d", swp_time, swp_shift);
                     die(errmsg);

@@ -74,7 +74,7 @@ void dmgstep(void)
         //  When tick reaches the next note timing
         if(wTick >= wNextTick[ch])
         {
-            hword lenBackup = 0, tempDot = 0;
+            hword lenBackup = 0, tempDot = 0, ch4_7stage = 0;
             if (SongData[ch][hCmdIndex[ch]] == TERM) {
                 reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
                 wNextTick[ch] = 0x7FFFFFFF;
@@ -115,11 +115,44 @@ void dmgstep(void)
                     hTempo = SongData[ch][++hCmdIndex[ch]] << 1;
                     reg16(TM2COUNT) = (65536 - (16777216 * 120/ (INT_FREQ * hTempo)));
                     break;
+
+                case SWPC:
+                    reg16(DMG1SWEEP)= SongData[ch][++hCmdIndex[ch]];
+                    break;
+
+                case NS7S:
+                    ch4_7stage = RLN_7STAGE;
+                    break;
+
+                case VECG:
+                    switch (ch)
+                    {
+                    case CH1:
+                        reg16(DMG1EDL)&= ~EDL_ENVvol(15);
+                        reg16(DMG1EDL)|= EDL_ENVvol(SongData[ch][++hCmdIndex[ch]]);
+                        break;
+                    case CH2:
+                        reg16(DMG2EDL)&= ~EDL_ENVvol(15);
+                        reg16(DMG2EDL)|= EDL_ENVvol(SongData[ch][++hCmdIndex[ch]]);
+                        break;
+                    case CH4:
+                        reg16(DMG4EDL)&= ~EDL_ENVvol(15);
+                        reg16(DMG4EDL)|= EDL_ENVvol(SongData[ch][++hCmdIndex[ch]]);
+                        break;
+                    }
+                    break;
                 }
                 hCmdIndex[ch]++;
             }
             if (SongData[ch][hCmdIndex[ch]] == REST) {
                 reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
+            }
+            else if (ch == CH4) {
+                reg16(DMGCNT) |= (DMGCNT_4L_ON|DMGCNT_4R_ON);
+                reg16(DMG4RLN) =
+                    RLFN_RESET | ch4_7stage |
+                    ((SongData[ch][hCmdIndex[ch]] << 1) & 0xF0) |
+                    (SongData[ch][hCmdIndex[ch]] & 0b0111);
             }
             else {
                 reg16(DMGCNT) |= (DMGCNT_1L_ON|DMGCNT_1R_ON) << ch;
