@@ -34,6 +34,8 @@ or
     - [Mabinogi MML](https://wikiwiki.jp/mabinogi/%E9%9F%B3%E6%A5%BD/MML)
     - [mjapa.jp MML](https://music-school.mjapa.jp/mml_to_midi_converter.html#mml_image)
 
+Now basic manual is available: [MML Style Overview](./mml/AboutMMLStyle.md)
+
 If you get ready:
 
 ```sh
