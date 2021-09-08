@@ -1,8 +1,4 @@
-#include "main.h"
-#include "songdata.h"
-#include "sounddrv.h"
-
-#define SONGINDEX_TO_PLAY 0   // <--- Change here for other songs
+#include "meta.h"
 
 void irq_handler(void)
 {
@@ -17,11 +13,34 @@ void irq_handler(void)
 
 int main(void)
 {
-    reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IR handler
+    reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IRQ handler
+    BgInit();
+    BgMakeFrame();
+
     dmginit();
-    dmgload(SONGINDEX_TO_PLAY);
-    dmgplay();
-    while(1);
+    dmgload(0);
+    static short songid_max;
+    for (songid_max=0; GetSongData(songid_max, 0); songid_max++);
+    songid_max--;
+
+    reg16(TM3COUNT)=0;
+    reg16(TM3CTRL)= TM_PRESC1024 | TM_START;
+
+    static unsigned short songid;    // Vertical or Horizontal Cursor position, and current songid
+    while(1) {
+        KeyStateUpdate();
+
+        if (KeyTyped(KEY_SEL)) dmgstop();
+        if (KeyTyped(KEY_STA)) {dmgload(songid); dmgplay();}
+        if (KeyTyped(KEY_DL)) {songid = (songid ? songid - 1 : songid_max);}
+        if (KeyTyped(KEY_DR)) {songid = (songid == songid_max ? 0 : songid + 1);}
+
+        while(reg16(LCDSTAT) ^ LCDSTAT_VBMASK);
+        /// Within VBLANK. Update screen
+        PutStr(BGN_MENULIST, BGL_MENU_VALUE_TX-1, 4, (reg16(TM3COUNT) & 0x1000) ? "\xe0     \xe1" : "       ");
+        PrintShort(BGN_MENULIST, BGL_MENU_VALUE_TX, 4, songid);
+        while(reg16(LCDSTAT) & LCDSTAT_VBMASK);
+    }
 
     return 0;
 }

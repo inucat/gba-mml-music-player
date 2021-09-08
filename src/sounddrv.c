@@ -1,7 +1,4 @@
-#include "sounddrv.h"
-#include "dmgsound.h"
-#include "songdata.h"
-#include "main.h"
+#include "meta.h"
 
 // #define CHMAX 4
 
@@ -23,8 +20,6 @@ static hword hRepHead[CHMAX]    = {0};
 static hword hRepCount[CHMAX]   = {0};
 static hword fLenDot[CHMAX]     = {0};
 
-/// Load song data & Initialize playback states
-/// @param songidx Song index
 void dmgload(int songidx) {
     dmgstop();
     wTick = 0;
@@ -34,17 +29,17 @@ void dmgload(int songidx) {
         wNextTick[i] = hCmdIndex[i] = fLenDot[i] = hRepHead[i] = hRepCount[i] = 0;
         hNoteLen[i] = 4;
     }
-    reg16(TM2CNT_L) = 65536 - 16777216 / INT_FREQ;
+    reg16(TM2COUNT) = 65536 - 16777216 / INT_FREQ;
 }
 
 void dmgplay(void) {
     reg16(DMGMSW) = DMGMSW_ON;
     reg16(DMGCNT) |= DMGCNT_ALLON;
-    reg16(TM2CNT_H) = TM_START | TM_IRQEN;
+    reg16(TM2CTRL) = TM_START | TM_IRQEN;
 }
 
 void dmgstop(void) {
-    reg16(TM2CNT_H) &= ~TM_START;
+    reg16(TM2CTRL) &= ~TM_START;
     reg16(DMGCNT) &= ~DMGCNT_ALLON;
 }
 
@@ -79,9 +74,9 @@ void dmgstep(void)
         //  When tick reaches the next note timing
         if(wTick >= wNextTick[ch])
         {
-            hword lenBackup = 0, tempDot = 0;
+            hword lenBackup = 0, tempDot = 0, ch4_7stage = 0;
             if (SongData[ch][hCmdIndex[ch]] == TERM) {
-                reg16(DMGCNT) &= ~(0x1100 << ch);
+                reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
                 wNextTick[ch] = 0x7FFFFFFF;
                 continue;
             }
@@ -118,27 +113,60 @@ void dmgstep(void)
 
                 case TMCG:
                     hTempo = SongData[ch][++hCmdIndex[ch]] << 1;
-                    reg16(TM2CNT_L) = (65536 - (16777216 * 120/ (INT_FREQ * hTempo)));
+                    reg16(TM2COUNT) = (65536 - (16777216 * 120/ (INT_FREQ * hTempo)));
+                    break;
+
+                case SWPC:
+                    reg16(DMG1SWEEP)= SongData[ch][++hCmdIndex[ch]];
+                    break;
+
+                case NS7S:
+                    ch4_7stage = RLN_7STAGE;
+                    break;
+
+                case VECG:
+                    switch (ch)
+                    {
+                    case CH1:
+                        reg16(DMG1EDL)&= ~EDL_ENVvol(15);
+                        reg16(DMG1EDL)|= EDL_ENVvol(SongData[ch][++hCmdIndex[ch]]);
+                        break;
+                    case CH2:
+                        reg16(DMG2EDL)&= ~EDL_ENVvol(15);
+                        reg16(DMG2EDL)|= EDL_ENVvol(SongData[ch][++hCmdIndex[ch]]);
+                        break;
+                    case CH4:
+                        reg16(DMG4EDL)&= ~EDL_ENVvol(15);
+                        reg16(DMG4EDL)|= EDL_ENVvol(SongData[ch][++hCmdIndex[ch]]);
+                        break;
+                    }
                     break;
                 }
                 hCmdIndex[ch]++;
             }
             if (SongData[ch][hCmdIndex[ch]] == REST) {
-                reg16(DMGCNT) &= ~(0x1100 << ch);
+                reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
+            }
+            else if (ch == CH4) {
+                reg16(DMGCNT) |= (DMGCNT_4L_ON|DMGCNT_4R_ON);
+                reg16(DMG4RLN) =
+                    RLFN_RESET | ch4_7stage |
+                    ((SongData[ch][hCmdIndex[ch]] << 1) & 0xF0) |
+                    (SongData[ch][hCmdIndex[ch]] & 0b0111);
             }
             else {
-                reg16(DMGCNT) |= 0x1100 << ch;
+                reg16(DMGCNT) |= (DMGCNT_1L_ON|DMGCNT_1R_ON) << ch;
                 reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | FreqGs[ SongData[ch][hCmdIndex[ch]] ];
             }
 
-            hword steptime = FOURBEAT / hNoteLen[ch];
+            hword gatetime = FOURBEAT / hNoteLen[ch];
 
             if (tempDot == 1 || (lenBackup == 0 && fLenDot[ch] == 1))
-                steptime += (steptime >> 1);
+                gatetime += (gatetime >> 1);
             else if (tempDot == 3 || (lenBackup == 0 && fLenDot[ch] == 3))
-                steptime += (steptime >> 1) + (steptime >> 2);
+                gatetime += (gatetime >> 1) + (gatetime >> 2);
 
-            wNextTick[ch] += steptime;
+            wNextTick[ch] += gatetime;
 
             if (lenBackup)
                 hNoteLen[ch] = lenBackup;

@@ -7,10 +7,13 @@ CFLAGS = -Wall -O -fno-builtin -fomit-frame-pointer -finhibit-size-directive \
 OUTNAME = main
 FILES = \
 	crt.o ${OUTNAME}.o \
-	sounddrv.o songdata.o
+	sounddrv.o songdata.o \
+	misaki_gothic_2nd_nega.o \
+	misaki_gothic_2nd.o \
+	bgobjmgr.o keyinput.o
 
 
-${OUTNAME}.bin: ${FILES}
+${OUTNAME}.bin: ${FILES} *.h
 	arm-none-eabi-ld -o ${OUTNAME}.out -T gcc.ls \
 	${FILES} ${LIBGCC}
 	arm-none-eabi-objcopy -O binary ${OUTNAME}.out ${OUTNAME}.bin

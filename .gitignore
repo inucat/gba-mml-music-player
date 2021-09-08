@@ -2,4 +2,6 @@
 *.o
 *.sav
 *.gba
+*.bin
 mml2dmg
+.vscode

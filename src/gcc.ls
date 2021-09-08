@@ -1,4 +1,4 @@
-/* This file is in the Public Domain */
+/* Public domain */
 OUTPUT_ARCH(arm)
 
 SECTIONS
