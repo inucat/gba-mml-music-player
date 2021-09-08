@@ -1,4 +1,4 @@
-/* I put this file into the public domain */
+/* Public domain */
 OUTPUT_ARCH(arm)
 
 SECTIONS

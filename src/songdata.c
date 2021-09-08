@@ -1,5 +1,4 @@
-#include "main.h"
-#include "songdata.h"
+#include "meta.h"
 
 byte sample1[] = {60, REST, REST, 60, TERM};
 byte sample2[] = {REST, 64, REST, 67, TERM};

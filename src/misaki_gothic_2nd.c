@@ -1,9 +1,9 @@
 
-//{{BLOCK(meguri_gothic_2nd)
+//{{BLOCK(misaki_gothic_2nd)
 
 //======================================================================
 //
-//	meguri_gothic_2nd, 128x128@8, 
+//	misaki_gothic_2nd, 128x128@8,
 //	+ palette 256 entries, not compressed
 //	+ 256 tiles not compressed
 //	Total size: 512 + 16384 = 16896
@@ -14,7 +14,7 @@
 //
 //======================================================================
 
-const unsigned char meguri_gothic_2ndTiles[16384] __attribute__((aligned(4))) __attribute__((visibility("hidden")))=
+const unsigned char misaki_gothic_2ndTiles[16384] __attribute__((aligned(4))) __attribute__((visibility("hidden")))=
 {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1169,7 +1169,7 @@ const unsigned char meguri_gothic_2ndTiles[16384] __attribute__((aligned(4))) __
 	0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
 };
 
-const unsigned short meguri_gothic_2ndPal[256] __attribute__((aligned(4))) __attribute__((visibility("hidden")))=
+const unsigned short misaki_gothic_2ndPal[256] __attribute__((aligned(4))) __attribute__((visibility("hidden")))=
 {
 	0x0000,0x7FFF,0x0421,0x0000,0x0000,0x0000,0x0000,0x0000,
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
@@ -1208,4 +1208,4 @@ const unsigned short meguri_gothic_2ndPal[256] __attribute__((aligned(4))) __att
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
 };
 
-//}}BLOCK(meguri_gothic_2nd)
+//}}BLOCK(misaki_gothic_2nd)

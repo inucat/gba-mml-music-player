@@ -1,8 +1,11 @@
 #ifndef _SOUNDDRV_H_
 #define _SOUNDDRV_H_
 
-// 2分音符の分解能(?).
-// タイマー初期値を 2^16 - (2^24 / FREQ) で求める都合上, FREQ >= 256 が必要.
+/// Sound driver frequency == Resolution of a half note.
+/// This must be at least 256 because the driver timer's reload count
+/// is set by the formula: 2^16 - (2^24 / FREQ).
+/// The slower the tempo gets, the smaller the reload count gets, and
+/// it can underflows if this constant is too small.
 #define INT_FREQ    576
 
 #define FOURBEAT    (INT_FREQ << 1)

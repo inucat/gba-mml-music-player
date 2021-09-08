@@ -1,7 +1,4 @@
-#include "sounddrv.h"
-#include "dmgsound.h"
-#include "songdata.h"
-#include "main.h"
+#include "meta.h"
 
 // #define CHMAX 4
 
@@ -32,17 +29,17 @@ void dmgload(int songidx) {
         wNextTick[i] = hCmdIndex[i] = fLenDot[i] = hRepHead[i] = hRepCount[i] = 0;
         hNoteLen[i] = 4;
     }
-    reg16(TM2CNT_L) = 65536 - 16777216 / INT_FREQ;
+    reg16(TM2COUNT) = 65536 - 16777216 / INT_FREQ;
 }
 
 void dmgplay(void) {
     reg16(DMGMSW) = DMGMSW_ON;
     reg16(DMGCNT) |= DMGCNT_ALLON;
-    reg16(TM2CNT_H) = TM_START | TM_IRQEN;
+    reg16(TM2CTRL) = TM_START | TM_IRQEN;
 }
 
 void dmgstop(void) {
-    reg16(TM2CNT_H) &= ~TM_START;
+    reg16(TM2CTRL) &= ~TM_START;
     reg16(DMGCNT) &= ~DMGCNT_ALLON;
 }
 
@@ -79,7 +76,7 @@ void dmgstep(void)
         {
             hword lenBackup = 0, tempDot = 0;
             if (SongData[ch][hCmdIndex[ch]] == TERM) {
-                reg16(DMGCNT) &= ~(0x1100 << ch);
+                reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
                 wNextTick[ch] = 0x7FFFFFFF;
                 continue;
             }
@@ -116,16 +113,16 @@ void dmgstep(void)
 
                 case TMCG:
                     hTempo = SongData[ch][++hCmdIndex[ch]] << 1;
-                    reg16(TM2CNT_L) = (65536 - (16777216 * 120/ (INT_FREQ * hTempo)));
+                    reg16(TM2COUNT) = (65536 - (16777216 * 120/ (INT_FREQ * hTempo)));
                     break;
                 }
                 hCmdIndex[ch]++;
             }
             if (SongData[ch][hCmdIndex[ch]] == REST) {
-                reg16(DMGCNT) &= ~(0x1100 << ch);
+                reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
             }
             else {
-                reg16(DMGCNT) |= 0x1100 << ch;
+                reg16(DMGCNT) |= (DMGCNT_1L_ON|DMGCNT_1R_ON) << ch;
                 reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | FreqGs[ SongData[ch][hCmdIndex[ch]] ];
             }
 

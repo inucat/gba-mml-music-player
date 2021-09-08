@@ -8,9 +8,9 @@ OUTNAME = main
 FILES = \
 	crt.o ${OUTNAME}.o \
 	sounddrv.o songdata.o \
-	meguri_gothic_2nd_nega.o \
-	meguri_gothic_2nd.o \
-	bgobjmgr.o
+	misaki_gothic_2nd_nega.o \
+	misaki_gothic_2nd.o \
+	bgobjmgr.o keyinput.o
 
 
 ${OUTNAME}.bin: ${FILES} *.h
