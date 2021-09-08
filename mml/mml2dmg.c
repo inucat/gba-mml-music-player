@@ -7,6 +7,7 @@
 #include <stdio.h>	    // printf, fscanf, ...
 #include <stdlib.h>	    // malloc, EXIT_FAILURE
 #include <string.h>	    // strcpy, strtok, strchr, ...
+#include <ctype.h>      // isdigit
 #include "../src/songdata.h"	// MUSICCOMMAND
 
 // #define CMD_HUMANREADABLE       // Commands are printed as four-letter enum code
@@ -176,6 +177,8 @@ void ParseCommandOption(int argc, char** argv){
 void ReadMML(FILE* pFile) {
     for (int iChannel=0; iChannel < CHMAX; iChannel++)
     {
+        /// Error message buffer
+        char errmsg[256] = {0};
         // ----- Each Channel Definition ----- //
         printf("const unsigned char %s_%d[] = {", szSongID, iChannel + 1);
 
@@ -250,6 +253,66 @@ void ReadMML(FILE* pFile) {
                     die("Note number over 127!");
                 PutCommand(nNoteNum);
                 nOctaveAcci=0;
+            }
+            else if (nLetter == 'N' && iChannel == CH4) {
+                /// Noise parameter
+                int clk_shr = fgetc(pFile); //~ 4bit
+                int clk_div = fgetc(pFile); //~ 3bit
+                if (strchr("0123456789ABCDEFabcdef", clk_shr) && strchr("0123456789ABCDEFabcdef", clk_div)) {
+                    clk_shr -= 0x30;
+                    clk_div -= 0x30;
+                    if (clk_shr > 10) {
+                        clk_shr = 9 + (clk_shr & 0x0F); /// 9 + lower 4bit --> [10 .. 15]
+                    }
+                    if (clk_div > 10) {
+                        clk_div = 9 + (clk_div & 0x0F); /// 9 + lower 4bit --> [10 .. 15]
+                    }
+                    fpos_t *rescanPos = (fpos_t *) malloc(sizeof(fpos_t *));
+                    fgetpos(pFile, rescanPos);
+                    int outval = (clk_shr << 3) | (clk_div & 0x07);
+                    int nAcciChar = fgetc(pFile);
+                    if (strchr("+-", nAcciChar) || (clk_div & 0x08))
+                        PutCommand(NS7S);
+                    else
+                        fsetpos(pFile, rescanPos);
+                    SeekLengthOption(pFile, TPDC); // Seeks [a-g] length option
+                    SeekDots(pFile, DOTT);     // Seek dots
+                    PutCommand(outval);
+                } else {
+                    sprintf(errmsg, "'N' command has invalid parameter: S%c%c", clk_shr, clk_div);
+                    die(errmsg);
+                }
+            }
+            else if (nLetter == 'S' && iChannel == CH1) {
+                /// Sweep parameter
+                int swp_time = fgetc(pFile);
+                int swp_shift = fgetc(pFile);
+                if (isdigit(swp_time) && isdigit(swp_shift)) {
+                    swp_time -= 0x30;   // Convert to actual numeric value
+                    swp_shift -= 0x30;
+                } else {
+                    sprintf(errmsg, "'S' command has non-numeric parameter: S%c%c", swp_time, swp_shift);
+                    die(errmsg);
+                }
+                if (!swp_time) {
+                    // S0*: Sweep disable
+                    PutCommandWithValue(SWPC, 0x08);
+                } else if (swp_shift < 8 && swp_time < 8) {
+                    byte val = swp_shift << 4 | swp_time;
+                    fpos_t *rescanPos = (fpos_t *) malloc(sizeof(fpos_t *));
+                    //	Seeks accidentals (+, -)
+                    fgetpos(pFile, rescanPos);
+                    int nAcciChar = fgetc(pFile);
+                    if (nAcciChar == '-')
+                        val |= 0x08;        //~ Sweep decliment
+                    else if (nAcciChar == '+')
+                        val &= ~0x08;
+                    else
+                        fsetpos(pFile, rescanPos);
+                } else {
+                    sprintf(errmsg, "'S' command parameters are out of range (0-7,0-7): S%d%d", swp_time, swp_shift);
+                    die(errmsg);
+                }
             }
             else if (nLetter == 'o') {
 				nOctave = SeekOption(pFile, 0);

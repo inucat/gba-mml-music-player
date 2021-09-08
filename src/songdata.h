@@ -17,6 +17,8 @@ typedef enum tagMusicCommands {
     DRDT,// Duration Dotted (ex. "l4.")
     VECG,// Velocity Change
     IRED,// Intro End
+    SWPC,   /// Sweep Control
+    NS7S,   /// Noise 7 Stages
 
     TERM = 255// Terminate Signal
 } MUSICCOMMAND;
