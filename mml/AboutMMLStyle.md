@@ -77,7 +77,7 @@ Note: `[ *** ]` means that `***` can be omitted.
 
 ##### `x`
 
-Noise clock prestep fed to 0x4000078 bit 7-4.
+Noise clock prestep fed to bit 7-4 of 0x4000078.
 
 The value can be between 0 and F (0 1 .. 9 A B .. F).
 
@@ -85,17 +85,18 @@ Corresponds to the parameter `p` of `RLN_pstep(p)` macro.
 
 ##### `y`
 
-Noise clock divisor fed to 0x4000078 bit 2-0.
+Noise clock divisor fed to bit 2-0 of 0x4000078.
 
 The value can be between 0 and F (0 1 .. 9 A B .. F).
 
 Corresponds to the parameter `d` of `RLN_div(d)` macro.
 
-If `y` is more than 7, it sets the counter step to 7 (default is 15).
+If `y` is more than 7, it implicitly sets the counter 7-step flag,
+and `d` will be `y & 0x07` (bit-wise AND).
 
 ##### `+`/`-`
 
-Both symbols set the counter step to 7.
+Both symbols explicitly set the counter step to 7.
 
 ##### `length`, `.`/`..`
 

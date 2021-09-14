@@ -4,9 +4,9 @@
 
 ## Requirements
 
-- GNU Arm Embedded Toolchain (`binutils-arm-none-eabi` or download from [official site](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
 - gcc, make (For x86 or x86_64)
-- mGBA (Optional)
+- GNU Arm Embedded Toolchain (Install Linux package `binutils-arm-none-eabi` or download from [official site](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
+- Emulator such as mGBA (Optional)
 
 ## Usage
 
@@ -66,11 +66,11 @@ it means that one or more notes are "out of octave range (= not in C2 to A9)".
 
 Then you should try `-o` or `-p` options.
 
-- `-vX` specifies the velocity normalization mode
+- `-vX` specifies the velocity scaling mode
 
 Available parameters are:
 
-| `X`               | Velocity limit is                  |
+| `X`               | Maximum velocity is                |
 | ----------------- | ---------------------------------- |
 | `w`               | 255                                |
 | `m`               | 15 (like Mabinogi MML, etc.)       |
