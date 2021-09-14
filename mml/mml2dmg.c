@@ -342,7 +342,7 @@ void ReadMML(FILE* pFile) {
 				if (!t) die("Tempo 0 found!");
 				PutCommandWithValue(TMCG, t>>1);    //  tempo is saved as half a value.
 			}
-            else if (nLetter == 'v') {
+            else if (nLetter == 'v' && iChannel != CH3) {
                 int v = SeekOption(pFile, 0);
                 PutCommandWithValue(VECG, v>>nVelBitShift);
             }

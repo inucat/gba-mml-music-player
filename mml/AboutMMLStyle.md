@@ -2,26 +2,70 @@
 
 ## Commands
 
-| Command | Meaning                           |
-| ------- | --------------------------------- |
-| `l`     | Perpetual length (note value)     |
-| `o`     | Perpetual octave                  |
-| `<`,`>` | Octave shift (lower, heighten)    |
-| `t`     | Tempo (BPM)                       |
-| `_`,`~` | (mjapa only?) Single octave shift |
-| `v`     | Perpetual velocity (unstable)     |
-| `N`     | (Exclusive) Noise parameter       |
-| `S`     | (Exclusive) Sweep control         |
-| ---     | **↓Not yet implemented↓**         |
-| `&`     | Tie                               |
-| `w`     | Whole volume                      |
-| `'`     | (mjapa only?) Single velocity     |
+All commands are *case-sensitive*.
+Commands can be saparated by spaces, but no spaces can be put between a command and its parameters.
 
-Exclusive commands of this sound driver are described below.
+| Command     | Meaning                           |
+| ----------- | --------------------------------- |
+| `a` to `g`  | Note of A, B, ... G               |
+| `+` and `-` | Sharp and flat                    |
+| `r`         | Rest                              |
+| `l`         | Perpetual length                  |
+| `.`         | Dot                               |
+| `o`         | Perpetual octave                  |
+| `<` and `>` | Perpetual octave shift (-1, +1)   |
+| `_` and `~` | Single octave shift (-1, +1)      |
+| `t`         | Tempo                             |
+| `;` and `,` | "End of Track" Marker             |
+| `v`         | Perpetual velocity                |
+| `[` and `]` | Loop section                      |
+| `N`         | (Exclusive) Noise parameter       |
+| `S`         | (Exclusive) Sweep control         |
+| ---         | **Below are NOT YET implemented** |
+| `&`         | Tie                               |
+| `w`         | Whole volume                      |
+| `'`         | Single velocity                   |
+| `/* ... */` | Comment                           |
 
-The hex parameter is case-insensitive.
+## Remarks
 
-### `N` Noise
+Notes and rests can be accompanied with its length next to them (e.g. `a4`).
+The default length is 4, the length of a quarter note.
+
+One or two dots can be put right of them.
+If the length and dot(s) are put together, the dot(s) must be put after the length (e.g. `c8 f+2. b-..`).
+
+Length command specifies the note value of all notes or rests after it.
+Its numeric parameter (1-255) can also be followed by dot(s) (e.g. `l3 l8. l2..`).
+Irregular values (the length not multiples of 2 or 3) are not recommended due to the sound driver precision.
+
+Octave ranges between 2 and 9, or exactly, from **C2** to **G9**.
+It is 4 if not specified.
+Notes out of the range cause a conversion failure.
+
+Tempo can vary from 1 to 510.
+Extremely slow or fast tempo may cause glitches due to the tempo implementation.
+
+Each track must be separated by an "End of Track" Marker (`;` or `,`).
+Track 1-4 of MML will be converted to GBA Sound 1-4 respectively.
+Any other tracks will be ignored.
+
+Perpetual velocity is, to be exact, the initial envelope volume from 0 to 15.
+Velocity scaling can be specified for the conversion from other style MML,
+which may have different velocity limit to 15.
+
+Loop is useful to reduce not only the MML length but also the binary size.
+Maximum loop count is needed after the section termination marker (e.g. `[cegb]3`).
+It will be assumed to be 1 if omitted.
+Note that loops do not save octave shift data (exclusive spec for my driver).
+For example, `o4 [ ceg > c ]2` plays the sequence of "C4 E4 G4 C5" twice,
+not of "C4 E4 G4 C5 C5 E5 G5 C6".
+
+## Exclusive commands for my GBA sound driver
+
+The hex parameter is *case-insensitive* unlike commands.
+
+### Noise
 
 #### Syntax
 
@@ -57,7 +101,7 @@ Both symbols set the counter step to 7.
 
 Same as that of the normal notes.
 
-### `S` Sweep
+### Sweep
 
 #### Syntax
 
