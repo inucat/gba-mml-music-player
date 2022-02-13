@@ -8,8 +8,8 @@ OUTNAME = main
 FILES = \
 	crt.o ${OUTNAME}.o \
 	sounddrv.o songdata.o \
-	misaki_gothic_2nd_nega.o \
-	misaki_gothic_2nd.o \
+	char_gfx/misaki_gothic_2nd_nega.o \
+	char_gfx/misaki_gothic_2nd.o \
 	bgobjmgr.o keyinput.o
 
 

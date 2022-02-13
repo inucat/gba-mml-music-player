@@ -12,12 +12,10 @@ const unsigned char GymnopedieNo1_mml_2[] = {132, 128, 130, 8, 59, 130, 8, 62, 6
 const unsigned char GymnopedieNo1_mml_3[] = {129, 2, 138, 1, 132, 43, 38, 133, 8, 42, 47, 40, 40, 38, 45, 132, 38, 133, 9, 40, 42, 47, 40, 40, 130, 4, 40, 130, 4, 47, 130, 4, 52, 45, 38, TERM};
 const unsigned char GymnopedieNo1_mml_4[] = {TERM};
 
-
-
-const unsigned char *songs[][CHMAX] = {
+const unsigned char *songs[][MAX_CHAN] = {
     {GymnopedieNo1_mml_1, GymnopedieNo1_mml_2, GymnopedieNo1_mml_3, GymnopedieNo1_mml_4},
     {Tinkle2LittleStar_cpped_1, Tinkle2LittleStar_cpped_2, Tinkle2LittleStar_cpped_3, Tinkle2LittleStar_cpped_4},
-    0
+    0   // sentinel
 };
 
 const unsigned char *GetSongData(int index, int ch) {

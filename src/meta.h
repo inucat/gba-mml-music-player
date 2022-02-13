@@ -8,7 +8,7 @@
 #include "sounddrv.h"
 #include "songdata.h"
 #include "bgobjmgr.h"
-#include "misaki_gothic_2nd.h"
-#include "misaki_gothic_2nd_nega.h"
+#include "char_gfx/misaki_gothic_2nd.h"
+#include "char_gfx/misaki_gothic_2nd_nega.h"
 
 #endif

@@ -2,7 +2,7 @@
 #define _MUSIC_H_
 #include "meta.h"
 
-#define CHMAX 4
+#define MAX_CHAN 4
 
 typedef enum tagMusicCommands {
     REST = 128,//-128
@@ -32,6 +32,7 @@ enum sound_channels {
     CH4
 };
 
+// Returns pointer to a channel of a song
 const unsigned char *GetSongData(int index, int ch);
 
 #endif

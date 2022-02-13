@@ -175,7 +175,7 @@ void ParseCommandOption(int argc, char** argv){
 }
 
 void ReadMML(FILE* pFile) {
-    for (int iChannel=0; iChannel < CHMAX; iChannel++)
+    for (int iChannel=0; iChannel < MAX_CHAN; iChannel++)
     {
         /// Error message buffer
         char errmsg[256] = {0};
@@ -354,9 +354,9 @@ void ReadMML(FILE* pFile) {
     }
 	fclose(pFile);
 
-    // ----- Array for songs[][CHMAX] ----- //
+    // ----- Array for songs[][MAX_CHAN] ----- //
 	printf("{");
-	for (int iChannel = 0; iChannel < CHMAX; iChannel++) {
+	for (int iChannel = 0; iChannel < MAX_CHAN; iChannel++) {
         printf("%s_%d", szSongID, iChannel + 1);
         if (iChannel != CH4) printf(", ");
 	}

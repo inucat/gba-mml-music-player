@@ -4,11 +4,11 @@ hword* const bgMap[] = {
     (hword*) VRAM_MAP(16),
     (hword*) VRAM_MAP(20),
     (hword*) VRAM_MAP(24),
-    (hword*) VRAM_MAP(28)};
+    (hword*) VRAM_MAP(28)
+};
 
-void BgMakeFrame(void)
-{
-    for (short t=0; t<1024; t++)
+void BgMakeFrame(void) {
+    for (short t=0; t < /* tile: 32x32 == */1024; t++)
         bgMap[3][t] = 0x20;
     for (short tx=0; tx<LCD_VTWIDT; tx++) {
         PutTile(BGN_WINDOWFRAME, tx, 0, 0x80);
@@ -16,9 +16,9 @@ void BgMakeFrame(void)
         PutTile(BGN_WINDOWFRAME, tx,17, 0x80);
         PutTile(BGN_WINDOWFRAME, tx,19, 0x80);
     }
-    PutStr(BGN_WINDOWFRAME, 2, 1, STAB_MUSICPLAYER);
-    PutStr(BGN_MENULIST, BGL_MENU_KEY_TX, 4, STAB_SONGINDEXIS);
-    PutStr(BGN_WINDOWFRAME, 3, 18, STAB_CONTROLHINT);
+    PutStr(BGN_WINDOWFRAME, 2, 1, STR_MUSICPLAYER);
+    PutStr(BGN_MENULIST, BGL_MENU_KEY_TX, 4, STR_SONGINDEXIS);
+    PutStr(BGN_WINDOWFRAME, 3, 18, STR_CONTROLHINT);
 }
 
 void PutTile(short bgnum, short tx, short ty, short tileId) {

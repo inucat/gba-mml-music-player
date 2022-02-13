@@ -2,7 +2,6 @@
 #define _BGOBJMGR_H_
 
 /// BG constants for Layout
-
 #define BGL_MENU_KEY_TX     2
 #define BGL_MENU_VALUE_TX   22
 
@@ -13,6 +12,7 @@ enum BGNUMBER_FOR_GUI_ELEMENTS {
     BGN_BACKDROP3
 };
 
+// Draw UI frame
 void BgMakeFrame(void);
 
 /// Put a tile
@@ -20,7 +20,7 @@ void BgMakeFrame(void);
 /// @param tx Tile-based x coordinate
 /// @param ty Tile-based y coordinate
 /// @param tileId Tile ID (0-1023?)
-/// @remarks ALL tiles including Id=0 are put.
+/// @remarks ASCII non printable characters can also be put.
 void PutTile(
     short bgnum,
     short tx,
@@ -32,7 +32,7 @@ void PutTile(
 /// @param tx Tile-based x coordinate
 /// @param ty Tile-based y coordinate
 /// @param str String to be put
-/// @remarks ALL chars including control characters are put, except only '\0'.
+/// @remarks ASCII non printable characters can also be put, except for \0.
 void PutStr(
     short bgnum,
     short tx,
@@ -51,5 +51,7 @@ void PrintShort(
     short ty,
     short num);
 
+// Init BG
 void BgInit(void);
+
 #endif
