@@ -1,7 +1,6 @@
 #include "meta.h"
 
-void irq_handler(void)
-{
+void irq_handler(void) {
     reg16(IME) = IME_OFF;   // Stop IRQ to prevent multiple IRQ
     short flag = reg16(IF);	// Get IRQ flag
     if (flag & IF_TM2) {
@@ -11,8 +10,7 @@ void irq_handler(void)
     reg16(IME) = IME_ON;    // Re-enable IRQ
 }
 
-int main(void)
-{
+int main(void) {
     reg32(IRQ_VECTOR) = (int) irq_handler;  // Register IRQ handler
 
     // BG & music
@@ -24,7 +22,7 @@ int main(void)
     static unsigned short songid;    // Current songid
     // Determines max. song id
     static short max_songid;
-    for (max_songid = 0; GetSongData(max_songid, 0); max_songid++);
+    for (max_songid = 0; get_song_track(max_songid, 0); max_songid++);
     max_songid--;
 
     // Timer for blink cursor
@@ -32,19 +30,19 @@ int main(void)
     reg16(TM3CTRL)  = TM_PRESC1024 | TM_START;
 
     while(1) {
-        KeyStateUpdate();
+        keys_update();
 
-        if (KeyTyped(KEY_SEL)) {
+        if (key_pushed(KEY_SEL)) {
             dmgstop();
         }
-        if (KeyTyped(KEY_STA)) {
+        if (key_pushed(KEY_STA)) {
             dmgload(songid);
             dmgplay();
         }
-        if (KeyTyped(KEY_DL)) {
+        if (key_pushed(KEY_DL)) {
             songid = (songid > 0 ? songid - 1 : max_songid);
         }
-        if (KeyTyped(KEY_DR)) {
+        if (key_pushed(KEY_DR)) {
             songid = (songid == max_songid ? 0 : songid + 1);
         }
 

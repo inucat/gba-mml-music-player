@@ -33,6 +33,6 @@ enum sound_channels {
 };
 
 // Returns pointer to a channel of a song
-const unsigned char *GetSongData(int index, int ch);
+const unsigned char *get_song_track(int index, int ch);
 
 #endif

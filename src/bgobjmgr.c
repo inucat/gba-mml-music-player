@@ -25,8 +25,7 @@ void PutTile(short bgnum, short tx, short ty, short tileId) {
     bgMap[bgnum][ tx +  ty * LCD_VTWIDT ] = tileId;
 }
 
-void BgInit(void)
-{
+void BgInit(void) {
     reg16(LCDCNT) = LCDCNT_BGMODE(0) |\
         LCDCNT_BG0ON | LCDCNT_BG1ON | LCDCNT_BG2ON | LCDCNT_BG3ON;
     reg16(BG0CNT) = BGCNT_MAP3232 | BGCNT_COL256 | BGCNT_TILENo(0) | BGCNT_MAPNo(16); // 32x32 Tiles VMap with 256 colors
@@ -45,14 +44,12 @@ void BgInit(void)
         vramTile[i] = misaki_gothic_2ndTiles[i<<1] | (misaki_gothic_2ndTiles[(i<<1)+1] << 8);
 }
 
-void PutStr(short bgnum, short tx, short ty, const char *str)
-{
+void PutStr(short bgnum, short tx, short ty, const char *str) {
     for (short i=0; str[i]; i++)
         bgMap[bgnum][tx + i + ty * LCD_VTWIDT] = str[i];
 }
 
-void PrintShort(short bgnum, short tx, short ty, short num)
-{
+void PrintShort(short bgnum, short tx, short ty, short num) {
     char szDigits[] = "     ";  // 3,2,7,6,7,\0
     for (short i=0; i<=4; i++) {
         szDigits[4-i] = num % 10 + 0x30;
