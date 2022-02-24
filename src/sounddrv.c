@@ -17,6 +17,15 @@ static hword loop_head[MAX_CHAN]    = {0};          // offset of start of repeat
 static hword loop_count[MAX_CHAN]   = {0};          // playback count for repeat section
 static hword note_dot[MAX_CHAN]     = {0};          // indicates the note has dot(s)
 
+struct playback_parameter_struct {
+    hword next_tick;    // tick time when next note will be handled
+    hword cmd_index;    // offset of each channel's byte array
+    hword note_len;     // current note length
+    hword loop_head;    // offset of start of repeat section
+    hword loop_count;   // playback count for repeat section
+    hword note_dot;     // indicates the note has dot(s)
+} pb_param[MAX_CHAN];
+
 void dmgload(int songid) {
     dmgstop();
     tick = 0;
