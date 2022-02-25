@@ -1,7 +1,6 @@
 #include "meta.h"
 
-/// MIDI note num. --> Freq_G value (see RLF_freq Macro)
-static hword gba_freq[128] = {0};
+static hword freq_param[128] = {0};
 
 static const unsigned char *Song[MAX_CHAN];
 
@@ -52,11 +51,11 @@ void dmgstop(void) {
 }
 
 void dmginit(void) {
-    // C, C#, D, ..., B -> FREQ_G value (see RLF_freq macro)
+    // Frequencies of MIDI note numbers -> Frequency Parameters (see RLF_freq macro)
     int freqbase[] = { 8372, 8870, 9397, 9956, 10548, 11175, 11840, 12544, 6645<<1, 7040<<1, 7459<<1, 7902<<1 };
-    for (int i=127, f=0; i>=36; i--) {
-        f = freqbase[i%12] >> (10 - i/12);
-        gba_freq[i] = RLF_freq(f);
+    for (int i=127; i>=36; i--) {
+        int f = freqbase[i%12] >> (10 - i/12);
+        freq_param[i] = RLF_freq(f);
     }
 
     // master
@@ -86,6 +85,10 @@ void dmginit(void) {
     // timer interrupt
     reg16(IE)= IF_TM2;
     reg16(IME)= IME_ON;
+}
+
+__inline short _dmg_handle_ctrl_cmd() {
+    ;
 }
 
 void dmgstep(void) {
@@ -177,7 +180,7 @@ void dmgstep(void) {
             }
             else {
                 reg16(DMGCNT) |= (DMGCNT_1L_ON|DMGCNT_1R_ON) << ch;
-                reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | gba_freq[ Song[ch][cmd_index[ch]] ];
+                reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | freq_param[ Song[ch][cmd_index[ch]] ];
             }
 
             hword gatetime_tick = FOURBEAT / note_len[ch];
