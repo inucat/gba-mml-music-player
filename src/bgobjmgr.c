@@ -16,9 +16,9 @@ void BgMakeFrame(void) {
         PutTile(BGN_WINDOWFRAME, tx,17, 0x80);
         PutTile(BGN_WINDOWFRAME, tx,19, 0x80);
     }
-    PutStr(BGN_WINDOWFRAME, 2, 1, STR_MUSICPLAYER);
-    PutStr(BGN_MENULIST, BGL_MENU_KEY_TX, 4, STR_SONGINDEXIS);
-    PutStr(BGN_WINDOWFRAME, 3, 18, STR_CONTROLHINT);
+    PutStr(BGN_WINDOWFRAME, 2, 1, "\x17  GBA MML Music Player  \x17");
+    PutStr(BGN_MENULIST, BGL_MENU_KEY_TX, 4, "Song index:");
+    PutStr(BGN_WINDOWFRAME, 3, 18, "\xFD START\xEE" "Play SELECT\xEE" "Stop");
 }
 
 void PutTile(short bgnum, short tx, short ty, short tileId) {

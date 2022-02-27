@@ -16,14 +16,14 @@ static hword loop_head[MAX_CHAN]    = {0};          // offset of start of repeat
 static hword loop_count[MAX_CHAN]   = {0};          // playback count for repeat section
 static hword note_dot[MAX_CHAN]     = {0};          // indicates the note has dot(s)
 
-struct playback_parameter_struct {
+struct playback_status_struct {
     hword next_tick;    // tick time when next note will be handled
     hword cmd_index;    // offset of each channel's byte array
     hword note_len;     // current note length
     hword loop_head;    // offset of start of repeat section
     hword loop_count;   // playback count for repeat section
     hword note_dot;     // indicates the note has dot(s)
-} pb_param[MAX_CHAN];
+} pb_status[MAX_CHAN];
 
 void dmgload(int songid) {
     dmgstop();
@@ -31,8 +31,14 @@ void dmgload(int songid) {
     tempo_bpm = 120;
     for (int i=CH1; i<MAX_CHAN; i++) {
         Song[i] = get_song_track(songid, i);
-        next_tick[i] = cmd_index[i] = note_dot[i] = loop_head[i] = loop_count[i] = 0;
-        note_len[i] = 4;
+        // next_tick[i] = cmd_index[i] = note_dot[i] = loop_head[i] = loop_count[i] = 0;
+        pb_status[i].cmd_index   = 0;
+        pb_status[i].next_tick   = 0;
+        pb_status[i].note_dot    = 0;
+        pb_status[i].loop_count  = 0;
+        pb_status[i].loop_head   = 0;
+        pb_status[i].note_len    = 4;
+        // note_len[i] = 4;
     }
 
     // Reset timer reload count which may be altered by tempo change
@@ -88,114 +94,112 @@ void dmginit(void) {
 }
 
 __inline short _dmg_handle_ctrl_cmd() {
-    ;
+    hword len_stack = 0, dot_tmp = 0, ch4_7stage = 0;
+    // Ignore channel if TERM reached
+    if (Song[ch][pb_status[ch].cmd_index] == TERM) {
+        reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
+        pb_status[ch].next_tick = 0x7FFFFFFF;
+        continue;
+    }
+
+    //  Control commands are processed first
+    while (Song[ch][pb_status[ch].cmd_index] > REST) {
+        switch (Song[ch][pb_status[ch].cmd_index]) {
+        case DRCG:
+            pb_status[ch].note_len = Song[ch][++(pb_status[ch].cmd_index)];
+            break;
+
+        case TPDC:
+            len_stack = pb_status[ch].note_len;
+            pb_status[ch].note_len = Song[ch][++(pb_status[ch].cmd_index)];
+            break;
+
+        case DOTT:
+            dot_tmp = Song[ch][++(pb_status[ch].cmd_index)];
+            break;
+
+        case RPHD:
+            pb_status[ch].loop_head = pb_status[ch].cmd_index;
+            pb_status[ch].loop_count = 0;
+            break;
+
+        case RPTL:
+            pb_status[ch].loop_count++;                                //  Section played once
+            hword repLim = Song[ch][++(pb_status[ch].cmd_index)];   //  Get repeat limit (0 means infty)
+            if (repLim == 0 || pb_status[ch].loop_count < repLim)
+                pb_status[ch].cmd_index = pb_status[ch].loop_head;
+            break;
+
+        case DRDT:
+            pb_status[ch].note_dot = Song[ch][++(pb_status[ch].cmd_index)];
+            break;
+
+        case TMCG:
+            tempo_bpm = Song[ch][++(pb_status[ch].cmd_index)] << 1;
+            reg16(TM2COUNT) = (65536 - (16777216 * 120/ (INT_FREQ * tempo_bpm)));
+            break;
+
+        case SWPC:
+            reg16(DMG1SWEEP)= Song[ch][++(pb_status[ch].cmd_index)];
+            break;
+
+        case NS7S:
+            ch4_7stage = RLN_7STAGE;
+            break;
+
+        case VECG:
+            switch (ch) {
+            case CH1:
+                reg16(DMG1EDL)&= ~EDL_ENVvol(15);
+                reg16(DMG1EDL)|= EDL_ENVvol(Song[ch][++(pb_status[ch].cmd_index)]);
+                break;
+            case CH2:
+                reg16(DMG2EDL)&= ~EDL_ENVvol(15);
+                reg16(DMG2EDL)|= EDL_ENVvol(Song[ch][++(pb_status[ch].cmd_index)]);
+                break;
+            case CH4:
+                reg16(DMG4EDL)&= ~EDL_ENVvol(15);
+                reg16(DMG4EDL)|= EDL_ENVvol(Song[ch][++(pb_status[ch].cmd_index)]);
+                break;
+            }
+            break;
+        }
+        pb_status[ch].cmd_index++;
+    }
 }
 
 void dmgstep(void) {
     for (hword ch = 0; ch < MAX_CHAN; ch++) {
         //  When tick reaches the next note tick time
-        if(tick >= next_tick[ch]) {
-            hword len_stack = 0, dot_tmp = 0, ch4_7stage = 0;
-
-            // Ignore channel if TERM reached
-            if (Song[ch][cmd_index[ch]] == TERM) {
-                reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
-                next_tick[ch] = 0x7FFFFFFF;
-                continue;
-            }
-
-            //  Control commands are processed first
-            while (Song[ch][cmd_index[ch]] > REST) {
-                switch (Song[ch][cmd_index[ch]]) {
-                case DRCG:
-                    note_len[ch] = Song[ch][++cmd_index[ch]];
-                    break;
-
-                case TPDC:
-                    len_stack = note_len[ch];
-                    note_len[ch] = Song[ch][++cmd_index[ch]];
-                    break;
-
-                case DOTT:
-                    dot_tmp = Song[ch][++cmd_index[ch]];
-                    break;
-
-                case RPHD:
-                    loop_head[ch] = cmd_index[ch];
-                    loop_count[ch] = 0;
-                    break;
-
-                case RPTL:
-                    loop_count[ch]++;                                //  Section played once
-                    hword repLim = Song[ch][++cmd_index[ch]];   //  Get repeat limit (0 means infty)
-                    if (repLim == 0 || loop_count[ch] < repLim)
-                        cmd_index[ch] = loop_head[ch];
-                    break;
-
-                case DRDT:
-                    note_dot[ch] = Song[ch][++cmd_index[ch]];
-                    break;
-
-                case TMCG:
-                    tempo_bpm = Song[ch][++cmd_index[ch]] << 1;
-                    reg16(TM2COUNT) = (65536 - (16777216 * 120/ (INT_FREQ * tempo_bpm)));
-                    break;
-
-                case SWPC:
-                    reg16(DMG1SWEEP)= Song[ch][++cmd_index[ch]];
-                    break;
-
-                case NS7S:
-                    ch4_7stage = RLN_7STAGE;
-                    break;
-
-                case VECG:
-                    switch (ch) {
-                    case CH1:
-                        reg16(DMG1EDL)&= ~EDL_ENVvol(15);
-                        reg16(DMG1EDL)|= EDL_ENVvol(Song[ch][++cmd_index[ch]]);
-                        break;
-                    case CH2:
-                        reg16(DMG2EDL)&= ~EDL_ENVvol(15);
-                        reg16(DMG2EDL)|= EDL_ENVvol(Song[ch][++cmd_index[ch]]);
-                        break;
-                    case CH4:
-                        reg16(DMG4EDL)&= ~EDL_ENVvol(15);
-                        reg16(DMG4EDL)|= EDL_ENVvol(Song[ch][++cmd_index[ch]]);
-                        break;
-                    }
-                    break;
-                }
-                cmd_index[ch]++;
-            }
-            if (Song[ch][cmd_index[ch]] == REST) {
+        if(tick >= pb_status[ch].next_tick) {
+            if (Song[ch][pb_status[ch].cmd_index] == REST) {
                 reg16(DMGCNT) &= ~((DMGCNT_1L_ON|DMGCNT_1R_ON) << ch);
             }
             else if (ch == CH4) {
                 reg16(DMGCNT) |= (DMGCNT_4L_ON|DMGCNT_4R_ON);
                 reg16(DMG4RLN) =
                     RLFN_RESET | ch4_7stage |
-                    ((Song[ch][cmd_index[ch]] << 1) & 0xF0) |
-                    (Song[ch][cmd_index[ch]] & 0b0111);
+                    ((Song[ch][pb_status[ch].cmd_index] << 1) & 0xF0) |
+                    (Song[ch][pb_status[ch].cmd_index] & 0b0111);
             }
             else {
                 reg16(DMGCNT) |= (DMGCNT_1L_ON|DMGCNT_1R_ON) << ch;
-                reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | freq_param[ Song[ch][cmd_index[ch]] ];
+                reg16(DMG1RLF + (ch<<3)) = RLFN_RESET | freq_param[ Song[ch][pb_status[ch].cmd_index] ];
             }
 
-            hword gatetime_tick = FOURBEAT / note_len[ch];
+            hword gatetime_tick = FOURBEAT / pb_status[ch].note_len;
 
-            if (dot_tmp == 1 || (len_stack == 0 && note_dot[ch] == 1))
+            if (dot_tmp == 1 || (len_stack == 0 && pb_status[ch].note_dot == 1))
                 gatetime_tick += (gatetime_tick >> 1);
-            else if (dot_tmp == 3 || (len_stack == 0 && note_dot[ch] == 3))
+            else if (dot_tmp == 3 || (len_stack == 0 && pb_status[ch].note_dot == 3))
                 gatetime_tick += (gatetime_tick >> 1) + (gatetime_tick >> 2);
 
-            next_tick[ch] += gatetime_tick;
+            pb_status[ch].next_tick += gatetime_tick;
 
             if (len_stack)
-                note_len[ch] = len_stack;
+                pb_status[ch].note_len = len_stack;
 
-            cmd_index[ch]++;
+            pb_status[ch].cmd_index++;
         }   // END IF for handled note
     }   // END LOOP for each channel
     (tick)++;

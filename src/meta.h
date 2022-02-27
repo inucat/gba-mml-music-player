@@ -3,7 +3,6 @@
 
 #include "exgba.h"
 #include "keyinput.h"
-#include "strtable.h"
 #include "dmgsound.h"
 #include "sounddrv.h"
 #include "songdata.h"
