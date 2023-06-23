@@ -5,3 +5,4 @@
 *.bin
 mml2dmg
 .vscode
+.DS_Store
