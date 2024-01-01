@@ -1,3 +1,5 @@
+# include songs/songs.mk
+
 ## Set this value correctly if the compiler tools are NOT in your PATH
 BINDIR = /opt/devkitpro/devkitARM/bin/
 
@@ -9,21 +11,26 @@ LIBGCC = `$(CC) -print-libgcc-file-name`
 CFLAGS = -Wall -O -fno-builtin -fomit-frame-pointer -finhibit-size-directive -fno-ident
 
 OUTNAME = main
-FILES = \
+
+OSONGS = \
+	song_ttls.o \
+	song_gymno1.o
+
+OFILES = \
 	crt.o $(OUTNAME).o \
 	sounddrv.o songdata.o \
 	char_gfx/misaki_gothic_2nd_nega.o \
 	char_gfx/misaki_gothic_2nd.o \
-	bgobjmgr.o keyinput.o
+	bgobjmgr.o keyinput.o \
+	$(OSONGS)
+
 
 .PHONY: all clean
 
-$(OUTNAME).gba: $(FILES) *.h
+$(OUTNAME).gba: $(OFILES) *.h
 	$(LD) -o $(OUTNAME).out -T gcc.ls \
-	$(FILES) $(LIBGCC)
+	$(OFILES) $(LIBGCC)
 	$(OBJCOPY) -O binary $(OUTNAME).out $(OUTNAME).gba
 
-all:	clean $(OUTNAME).gba
-
 clean:
-	rm -f *.o *.out *.sav *.gba
+	-rm -f *.o *.out *.sav *.gba
