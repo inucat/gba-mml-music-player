@@ -1,11 +1,14 @@
-# GBA MML Music Player \[Demo\]
+# GBA MML Music Player (Demo)
 
-:information_source: You can play and add songs.
+You can play and add songs.
 
 ## Requirements
 
-- gcc, make (For x86 or x86_64)
-- GNU Arm Embedded Toolchain (Install Linux package `binutils-arm-none-eabi` or download from [official site](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
+- gcc, make (For amd64)
+- GNU Arm Embedded Toolchain
+  - With your package manager (distributed as `binutils-arm-none-eabi` or something)
+  - Direct download from [official site](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
+  - From [devkitPro](https://devkitpro.org/) devkitARM (feature-rich, multi-purpose with other utilities)
 - Emulator such as mGBA (Optional)
 
 ## Usage
@@ -15,8 +18,9 @@
 ```sh
     cd src/
     make
-    mgba-qt main.gba
 ```
+
+And feed the `main.gba` to your GBA emulator or actual device.
 
 This demo includes:
 
@@ -26,16 +30,17 @@ This demo includes:
 ### To add songs:
 
 First, prepare your song in MML format.
-The format must follow
+The MML style supported are
 [Mabinogi](https://mabinogi.nexon.co.jp/) style
-or
+and
 [mjapa.jp](https://music-school.mjapa.jp/) style (Both are quite similar).
+Note that not all syntaxes are recognized so far.
 
 - Reference:
   - [Mabinogi MML](https://wikiwiki.jp/mabinogi/%E9%9F%B3%E6%A5%BD/MML)
   - [mjapa.jp MML](https://music-school.mjapa.jp/mml_to_midi_converter.html#mml_image)
 
-Now basic manual is available: [MML Style Overview](./mml/AboutMMLStyle.md)
+Now basic syntax manual is available: [MML Style Overview](./mml/AboutMMLStyle.md)
 
 If you get ready:
 
