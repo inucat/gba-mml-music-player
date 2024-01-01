@@ -28,8 +28,7 @@ OFILES = \
 .PHONY: all clean
 
 $(OUTNAME).gba: $(OFILES) *.h
-	$(LD) -o $(OUTNAME).out -T gcc.ls \
-	$(OFILES) $(LIBGCC)
+	$(LD) -o $(OUTNAME).out -T gcc.ls $(OFILES) $(LIBGCC)
 	$(OBJCOPY) -O binary $(OUTNAME).out $(OUTNAME).gba
 
 clean:
