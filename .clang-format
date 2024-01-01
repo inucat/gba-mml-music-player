@@ -1,0 +1,11 @@
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 4
+# Parameters per line, with block indent style
+BinPackArguments: false
+BinPackParameters: false
+# AlignAfterOpenBracket: BlockIndent
+#
+ColumnLimit: 100
+SpaceAfterCStyleCast: true
+AllowShortFunctionsOnASingleLine: Empty
