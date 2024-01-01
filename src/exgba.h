@@ -9,9 +9,9 @@
 
 /// Type definitions
 
-typedef unsigned char   byte;
-typedef unsigned short  hword;
-typedef unsigned int    word;
+typedef unsigned char   byte, uint8;
+typedef unsigned short  hword, uint16;
+typedef unsigned int    word, uint32;
 
 /// Register access
 

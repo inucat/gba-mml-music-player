@@ -19,6 +19,7 @@
 ```
 
 This demo includes:
+
 - "Gymnopedie No.1" (Erik Satie)
 - "12 Variationen über ein französisches Lied 'Ah, vous dirai-je, maman'" (Wolfgang Amadeus Mozart)
 
@@ -31,8 +32,8 @@ or
 [mjapa.jp](https://music-school.mjapa.jp/) style (Both are quite similar).
 
 - Reference:
-    - [Mabinogi MML](https://wikiwiki.jp/mabinogi/%E9%9F%B3%E6%A5%BD/MML)
-    - [mjapa.jp MML](https://music-school.mjapa.jp/mml_to_midi_converter.html#mml_image)
+  - [Mabinogi MML](https://wikiwiki.jp/mabinogi/%E9%9F%B3%E6%A5%BD/MML)
+  - [mjapa.jp MML](https://music-school.mjapa.jp/mml_to_midi_converter.html#mml_image)
 
 Now basic manual is available: [MML Style Overview](./mml/AboutMMLStyle.md)
 
@@ -46,13 +47,42 @@ If you get ready:
 
 It converts MML to C array format.
 
-Copy the output, paste the array definitions beginning with `const` to above `songs` array in the file `src/songdata.c`,
-and paste the line of `{xxx_1, xxx_2, xxx_3, xxx_4},` into `songs`.
+(TODO: automate procedures from here.)
+
+Copy the output, paste the array definitions beginning with `const` to the separate file in the `src/` (e.g. `song_newsong.c`).
+
+Add the declaration of tracks of your song to the file (e.g. `const unsigned char *tracks_newsong[4] ={xxx_1, xxx_2, xxx_3, xxx_4}`).
 `xxx` is your song name.
+
+Create a new header (e.g. `src/song_newsong.h`) with contents similar to the following:
+
+```c
+extern const unsigned char *tracks_gymno1[4];
+```
+
+(TODO: automate procedures until here.)
+
+Modify `songdata.c` to include the header file, and add the track to `songs` array, like:
+
+```c
+#include "song_newsong.h"
+
+const uint8 **songs[] = {
+    tracks_gymno1, tracks_ttls, tracks_newsong
+    0 // sentinel
+};
+```
+
+Then add the object file requisites to `OSONGS` in `Makefile`. It will look like this:
+
+    OSONGS = \
+        song_ttls.o \
+        song_gymno1.o \
+        song_newsong.o
 
 Finally, run `make` in `src` directory, and play the ROM.
 
-Song index is your song's index in `songs` array.
+The songs are indexed in the order of `songs` array.
 
 ### About `mml2dmg`
 
